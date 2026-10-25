@@ -13,8 +13,8 @@ The laboratories introduce digital hardware design using SystemVerilog, hardware
 | Laboratory | Topic | Main concepts | Access |
 |---|---|---|---|
 | Lab 0 | Devtool<br> <span style="color: red;">(No Logbook)</span> | Verilator, GTKWave, RISC-V tools and VS Code | [Lab 0](lab0-devtools/README.md) |
-| Lab 1 | Counter Master | SystemVerilog, testbenches, Vbuddy, counters and BCD conversion | [Lab 1](Lab1-Counter-master/readme.md) |
-| Lab 2 | Signal Generation | ROM, RAM, sine-wave generation, phase offset and audio delay | [Lab 2](Lab2-SigGen-main/Lab_2.md) |
+| Lab 1 | Counter Master | SystemVerilog, testbenches, Vbuddy, counters and BCD conversion | [Lab 1](Lab1-Counter-master/lab1.md) |
+| Lab 2 | Signal Generation | ROM, RAM, sine-wave generation, phase offset and audio delay | [Lab 2](Lab2-SigGen-main/lab2.md) |
 
 ---
 
