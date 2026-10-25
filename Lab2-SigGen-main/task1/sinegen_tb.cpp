@@ -2,59 +2,55 @@
 #include "verilated_vcd_c.h"
 #include "Vsinegen.h"
 
-#include "vbuddy.cpp"
-
+#include "vbuddy.cpp"     // include vbuddy code
 #define MAX_SIM_CYC 1000000
 #define ADDRESS_WIDTH 8
 #define ROM_SZ 256
 
 int main(int argc, char **argv, char **env) {
-    int simcyc;
-    int tick;
+  int simcyc;     // simulation clock count
+  int tick;       // each clk cycle has two ticks for two edges
 
-    Verilated::commandArgs(argc, argv);
+  Verilated::commandArgs(argc, argv);
+  // init top verilog instance
+  Vsinegen* top = new Vsinegen;
+  // init trace dump
+  Verilated::traceEverOn(true);
+  VerilatedVcdC* tfp = new VerilatedVcdC;
+  top->trace (tfp, 99);
+  tfp->open ("sinegen.vcd");
 
-    // Initialize top-level Verilog instance
-    Vsinegen* top = new Vsinegen;
+  // init Vbuddy
+  if (vbdOpen()!=1) return(-1);
+  vbdHeader("L2T1: SigGen");
+  //vbdSetMode(1);        // Flag mode set to one-shot
 
-    // Initialize trace dump
-    Verilated::traceEverOn(true);
-    VerilatedVcdC* tfp = new VerilatedVcdC;
-    top->trace(tfp, 99);
-    tfp->open("sinegen.vcd");
+  // initialize simulation inputs
+  top->clk = 1;
+  top->rst = 0;
+  top->en = 1;
+  top->incr = 1;
 
-    // Initialize Vbuddy
-    if (vbdOpen() != 1) return(-1);
-    vbdHeader("L2T1: SigGen");
-
-    // Initialize simulation inputs
-    top->clk = 1;
-    top->rst = 0;
-    top->en = 1;
-    top->incr = 1;
-
-    for (simcyc = 0; simcyc < MAX_SIM_CYC; simcyc++) {
-
-        // Toggle clock and dump waveforms
-        for (tick = 0; tick < 2; tick++) {
-            tfp->dump(2*simcyc + tick);
-            top->clk = !top->clk;
-            top->eval();
-        }
-
-        // Read rotary encoder value
-        top->incr = vbdValue();
-
-        // Plot ROM output
-        vbdPlot(int(top->dout), 0, 255);
-        vbdCycle(simcyc);
-
-        // Quit if finished or 'q' pressed
-        if (Verilated::gotFinish() || vbdGetkey() == 'q')
-            exit(0);
+  // run simulation for MAX_SIM_CYC clock cycles
+  for (simcyc=0; simcyc<MAX_SIM_CYC; simcyc++) {
+    // dump variables into VCD file and toggle clock
+    for (tick=0; tick<2; tick++) {
+      tfp->dump (2*simcyc+tick);
+      top->clk = !top->clk;
+      top->eval ();
     }
+    
+    top->incr = vbdValue();
+    // plot ROM output and print cycle count
+    vbdPlot(int (top->dout), 0, 255);
+    vbdCycle(simcyc);
 
-    vbdClose();
-    tfp->close();
-    exit(0);
+    // either simulation finished, or 'q' is pressed
+    if ((Verilated::gotFinish()) || (vbdGetkey()=='q')) 
+      exit(0);                // ... exit if finish OR 'q' pressed
+  }
+
+  vbdClose();     // ++++
+  tfp->close(); 
+  exit(0);
 }

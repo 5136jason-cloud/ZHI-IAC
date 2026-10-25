@@ -6,7 +6,7 @@ module sinegen #(
     input  logic               clk,     // clock
     input  logic               rst,     // reset
     input  logic               en,      // enable
-    input  logic [D_WIDTH-1:0] incr,    // increment for addr counter
+    input  logic [A_WIDTH-1:0] incr,    // increment for addr counter
     output logic [D_WIDTH-1:0] dout     // output data
 );
 
